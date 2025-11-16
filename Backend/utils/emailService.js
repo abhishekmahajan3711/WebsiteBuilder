@@ -106,7 +106,7 @@ export const sendWelcomeEmail = async (email, userName) => {
             </p>
             
             <div style="text-align: center; margin: 30px 0;">
-              <a href="http://localhost:5173/dashboard" 
+              <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/dashboard" 
                  style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
                         color: white; 
                         padding: 15px 30px; 

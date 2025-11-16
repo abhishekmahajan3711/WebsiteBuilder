@@ -4,7 +4,10 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { sendPasswordResetEmail, sendWelcomeEmail, sendVerificationEmail as sendVerificationEmailUtil } from '../utils/emailService.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'devsecret';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
 
 export const signup = async (req, res) => {
   try {
@@ -41,7 +44,6 @@ export const signin = async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     // Generate JWT
-    const JWT_SECRET = process.env.JWT_SECRET;
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
 
     // Get feature access
@@ -189,7 +191,8 @@ export const forgotPassword = async (req, res) => {
     await user.save();
 
     // Send password reset email
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
     const emailSent = await sendPasswordResetEmail(email, resetUrl, user.name);
     
     if (!emailSent) {
@@ -329,7 +332,8 @@ export const sendVerificationEmail = async (req, res) => {
     user.emailVerificationExpires = Date.now() + 86400000; // 24 hours
     await user.save();
     // Send verification email
-    const verificationUrl = `http://localhost:5173/verify-email/${verificationToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const verificationUrl = `${frontendUrl}/verify-email/${verificationToken}`;
     const emailSent = await sendVerificationEmailUtil(user.email, verificationUrl, user.name);
     if (!emailSent) {
       return res.status(500).json({ message: 'Failed to send verification email' });

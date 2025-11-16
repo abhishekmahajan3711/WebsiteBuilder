@@ -9,7 +9,10 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: 'No token' });
     }
     const token = auth.split(' ')[1];
-    const JWT_SECRET = process.env.JWT_SECRET || 'devsecret';
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(decoded.id);
     if (!user) return res.status(401).json({ message: 'User not found' });

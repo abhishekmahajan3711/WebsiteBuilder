@@ -39,9 +39,9 @@ export const createPayUOrder = async (req, res) => {
       firstname: user.name || 'User',
       email: user.email,
       phone: user.phone || '',
-      surl: `${req.protocol}://${req.get('host')}/dashboard/my-plan?success=true`,
-      furl: `${req.protocol}://${req.get('host')}/dashboard/my-plan?failed=true`,
-      curl: `${req.protocol}://${req.get('host')}/dashboard/my-plan?cancelled=true`,
+      surl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/dashboard/my-plan?success=true`,
+      furl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/dashboard/my-plan?failed=true`,
+      curl: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/dashboard/my-plan?cancelled=true`,
       hash: ''
     };
 
