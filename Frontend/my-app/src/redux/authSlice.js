@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { resetWebsites } from './websitesSlice';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const initialState = {
   user: null,
   token: localStorage.getItem('token') || null,
@@ -13,7 +15,7 @@ const initialState = {
 
 export const signupUser = createAsyncThunk('auth/signupUser', async (form, thunkAPI) => {
   try {
-    const response = await axios.post('http://localhost:5000/api/auth/signup', form);
+    const response = await axios.post(`${API_URL}/auth/signup`, form);
     return response.data;
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response?.data?.message || 'Signup failed');
@@ -22,7 +24,7 @@ export const signupUser = createAsyncThunk('auth/signupUser', async (form, thunk
 
 export const signinUser = createAsyncThunk('auth/signinUser', async (form, thunkAPI) => {
   try {
-    const response = await axios.post('http://localhost:5000/api/auth/signin', form);
+    const response = await axios.post(`${API_URL}/auth/signin`, form);
     localStorage.setItem('token', response.data.token);
     return response.data;
   } catch (err) {
@@ -34,7 +36,7 @@ export const loadUser = createAsyncThunk('auth/loadUser', async (_, thunkAPI) =>
   const token = localStorage.getItem('token');
   if (!token) return thunkAPI.rejectWithValue('No token');
   try {
-    const response = await axios.get('http://localhost:5000/api/auth/me', {
+    const response = await axios.get(`${API_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     return { ...response.data, token };

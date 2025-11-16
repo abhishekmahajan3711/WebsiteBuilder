@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchWebsites } from '../redux/websitesSlice';
 
+
 // Simple Modal component
 const Modal = ({ open, title, message, onConfirm, onCancel, confirmText = 'OK', cancelText = 'Cancel', onlyConfirm = false }) => {
   if (!open) return null;

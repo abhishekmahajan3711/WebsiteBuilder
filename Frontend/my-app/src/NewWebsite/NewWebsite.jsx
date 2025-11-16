@@ -89,8 +89,9 @@ const NewWebsite = () => {
       setTemplates([]);
       setSelectedTemplate(null);
       
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
       axios
-        .get(`http://localhost:5000/api/templates?role=${selectedRole}`)
+        .get(`${apiUrl}/templates?role=${selectedRole}`)
         .then(res => {
           setTemplates(res.data);
           setLoading(false);
@@ -106,8 +107,9 @@ const NewWebsite = () => {
     try {
       setCreating(true);
       const token = localStorage.getItem('token');
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
       const res = await axios.post(
-        'http://localhost:5000/api/websites',
+        `${apiUrl}/websites`,
         { role: selectedRole, templateKey: template.key },
         { headers: { Authorization: `Bearer ${token}` } }
       );

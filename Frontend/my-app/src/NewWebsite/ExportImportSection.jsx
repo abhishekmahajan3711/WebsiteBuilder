@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateFeatureAccess } from '../redux/authSlice';
 
 const ExportImportSection = ({ websiteId, seoTitle, seoLogoUrl }) => {
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const dispatch = useDispatch();
   const featureAccess = useSelector(state => state.auth.featureAccess);
   const exportCredits = featureAccess?.features?.export_website?.value ?? 0;
@@ -34,16 +35,16 @@ const ExportImportSection = ({ websiteId, seoTitle, seoLogoUrl }) => {
     setLoading(true);
     let url, filename;
     if (type === 'json') {
-      url = `http://localhost:5000/api/websites/${websiteId}/export`;
+      url = `${API_URL}/websites/${websiteId}/export`;
       filename = `website_${websiteId}_export.json`;
     }
     try {
       // Decrement export credit first
-      await axios.post('http://localhost:5000/api/auth/decrement-export-credit', {}, {
+      await axios.post(`${API_URL}/auth/decrement-export-credit`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Update credits in Redux
-      const featureRes = await axios.get('http://localhost:5000/api/auth/me', {
+      const featureRes = await axios.get(`${API_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       dispatch(updateFeatureAccess(featureRes.data.featureAccess));
@@ -74,11 +75,11 @@ const ExportImportSection = ({ websiteId, seoTitle, seoLogoUrl }) => {
     setLoading(true);
     try {
       // Decrement export credit first
-      await axios.post('http://localhost:5000/api/auth/decrement-export-credit', {}, {
+      await axios.post(`${API_URL}/auth/decrement-export-credit`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // Update credits in Redux
-      const featureRes = await axios.get('http://localhost:5000/api/auth/me', {
+      const featureRes = await axios.get(`${API_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       dispatch(updateFeatureAccess(featureRes.data.featureAccess));

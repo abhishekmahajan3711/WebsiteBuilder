@@ -205,7 +205,8 @@ const ComponentEditor = ({ component, template, onChange }) => {
       if (shouldDecrement) {
         const token = localStorage.getItem('token');
         try {
-          const res = await axios.post('http://localhost:5000/api/auth/decrement-image-credit', {}, {
+          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+          const res = await axios.post(`${apiUrl}/auth/decrement-image-credit`, {}, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -250,7 +251,7 @@ const ComponentEditor = ({ component, template, onChange }) => {
   };
 
   const handlePurchaseImageCredits = () => {
-    navigate('/dashboard/plan');
+    navigate('/dashboard/my-plan');
   };
 
   const featureAccess = useSelector(state => state.auth.featureAccess);

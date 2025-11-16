@@ -27,9 +27,11 @@ const UserPlan = () => {
   const [paymentHistory, setPaymentHistory] = useState([]);
   const [showPaymentHistory, setShowPaymentHistory] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  
   useEffect(() => {
     if (!token) return;
-    axios.get('http://localhost:5000/api/websites/feature-prices', {
+    axios.get(`${API_URL}/websites/feature-prices`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -86,7 +88,7 @@ const UserPlan = () => {
   // Load payment history
   const loadPaymentHistory = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/payments/history', {
+      const response = await axios.get(`${API_URL}/payments/history`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPaymentHistory(response.data);
@@ -99,52 +101,53 @@ const UserPlan = () => {
 
   // Handle PayU checkout
   const handlePayUCheckout = async () => {
-    if (totalCost === 0) return;
+    // if (totalCost === 0) return;
 
-    try {
-      setLoading(true);
+    // try {
+    //   setLoading(true);
       
-      // Prepare items for payment
-      const items = Object.entries(quantities)
-        .filter(([key, qty]) => qty > 0)
-        .map(([key, qty]) => ({
-          featureKey: key,
-          quantity: qty,
-          price: prices[key] || 0
-        }));
+    //   // Prepare items for payment
+    //   const items = Object.entries(quantities)
+    //     .filter(([key, qty]) => qty > 0)
+    //     .map(([key, qty]) => ({
+    //       featureKey: key,
+    //       quantity: qty,
+    //       price: prices[key] || 0
+    //     }));
 
-      const response = await axios.post('http://localhost:5000/api/payments/create-order', {
-        items,
-        totalAmount: totalCost
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    //   const response = await axios.post('http://localhost:5000/api/payments/create-order', {
+    //     items,
+    //     totalAmount: totalCost
+    //   }, {
+    //     headers: { Authorization: `Bearer ${token}` }
+    //   });
 
-      // Create PayU form and submit
-      const payuData = response.data.payuData;
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = process.env.NODE_ENV === 'production' 
-        ? 'https://securegw.paytm.in/oltp-web/processTransaction' 
-        : 'https://test.payu.in/_payment';
+    //   // Create PayU form and submit
+    //   const payuData = response.data.payuData;
+    //   const form = document.createElement('form');
+    //   form.method = 'POST';
+    //   form.action = process.env.NODE_ENV === 'production' 
+    //     ? 'https://securegw.paytm.in/oltp-web/processTransaction' 
+    //     : 'https://test.payu.in/_payment';
 
-      // Add form fields
-      Object.keys(payuData).forEach(key => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = payuData[key];
-        form.appendChild(input);
-      });
+    //   // Add form fields
+    //   Object.keys(payuData).forEach(key => {
+    //     const input = document.createElement('input');
+    //     input.type = 'hidden';
+    //     input.name = key;
+    //     input.value = payuData[key];
+    //     form.appendChild(input);
+    //   });
 
-      document.body.appendChild(form);
-      form.submit();
+    //   document.body.appendChild(form);
+    //   form.submit();
       
-    } catch (error) {
-      console.error('Failed to create PayU order:', error);
-      alert('Failed to initiate payment. Please try again.');
-      setLoading(false);
-    }
+    // } catch (error) {
+    //   console.error('Failed to create PayU order:', error);
+    //   alert('Failed to initiate payment. Please try again.');
+    //   setLoading(false);
+    // }
+    alert("Payment facility is not available yet. You can try by making different account or Unpublishing website.");
   };
 
   return (
@@ -154,7 +157,7 @@ const UserPlan = () => {
           <span className="text-3xl">🪪</span>
           <div>
             <h1 className="text-2xl font-bold mb-1">My Plan & Credits</h1>
-            <div className="text-sm opacity-80">Manage your feature credits and upgrade your plan</div>
+            <div className="text-sm opacity-80">Payment Facility is not available yet. You can try by making different account or Unpublishing website.</div>
           </div>
         </div>
         <div className="bg-white rounded-b-xl shadow p-6 border border-gray-100">

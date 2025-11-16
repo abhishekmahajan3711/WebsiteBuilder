@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 export const fetchWebsites = createAsyncThunk('websites/fetchWebsites', async (token, thunkAPI) => {
   try {
-    const response = await axios.get('http://localhost:5000/api/websites', {
+    const response = await axios.get(`${API_URL}/websites`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;

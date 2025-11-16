@@ -15,7 +15,8 @@ const EmailVerification = () => {
   useEffect(() => {
     const verifyEmail = async () => {
       try {
-        await axios.post('http://localhost:5000/api/auth/verify-email', { token });
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        await axios.post(`${apiUrl}/auth/verify-email`, { token });
         setSuccess(true);
         setLoading(false);
         // If user is logged in, refresh Redux user state

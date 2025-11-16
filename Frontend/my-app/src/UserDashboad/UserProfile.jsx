@@ -4,6 +4,7 @@ import axios from 'axios';
 import { loadUser } from '../redux/authSlice';
 
 const UserProfile = () => {
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const user = useSelector(state => state.auth.user);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -44,7 +45,7 @@ const UserProfile = () => {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put('http://localhost:5000/api/auth/update-profile', profileData, {
+      const response = await axios.put(`${API_URL}/auth/update-profile`, profileData, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setMessage('Profile updated successfully!');
@@ -75,7 +76,7 @@ const UserProfile = () => {
     }
     try {
       const token = localStorage.getItem('token');
-      await axios.put('http://localhost:5000/api/auth/change-password', {
+      await axios.put(`${API_URL}/auth/change-password`, {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       }, {
@@ -96,7 +97,7 @@ const UserProfile = () => {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/auth/send-verification-email', {
+      await axios.post(`${API_URL}/auth/send-verification-email`, {
         email: user.email
       }, {
         headers: { 'Authorization': `Bearer ${token}` }

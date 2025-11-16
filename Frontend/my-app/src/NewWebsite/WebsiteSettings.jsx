@@ -15,6 +15,7 @@ const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:rin
 const labelClass = 'block text-sm font-medium text-gray-700 mb-2';
 
 const WebsiteSettings = ({ website, onSave }) => {
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const [currentSlug, setCurrentSlug] = useState(website.slug || '');
   const [newSlug, setNewSlug] = useState(website.slug || '');
   const [savingSlug, setSavingSlug] = useState(false);
@@ -50,7 +51,7 @@ const WebsiteSettings = ({ website, onSave }) => {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.put(
-        `http://localhost:5000/api/websites/${website._id}/slug`,
+        `${API_URL}/websites/${website._id}/slug`,
         { slug: newSlug },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -80,13 +81,13 @@ const WebsiteSettings = ({ website, onSave }) => {
         setMessage('Website data saved');
       }
       // Decrement publish_limit in backend
-      const res = await axios.post('http://localhost:5000/api/auth/decrement-publish-limit', {}, {
+      const res = await axios.post(`${API_URL}/auth/decrement-publish-limit`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       if (res.data && res.data.featureAccess) {
         dispatch(updateFeatureAccess(res.data.featureAccess));
       }
-      const publishRes = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/websites/${website._id}`, {
+      const publishRes = await axios.put(`${API_URL}/websites/${website._id}`, {
         isPublished: true,
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -112,13 +113,13 @@ const WebsiteSettings = ({ website, onSave }) => {
     setPublishing(true);
     try {
       // Increment publish_limit in backend
-      const res = await axios.post('http://localhost:5000/api/auth/increment-publish-limit', {}, {
+      const res = await axios.post(`${API_URL}/auth/increment-publish-limit`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       if (res.data && res.data.featureAccess) {
         dispatch(updateFeatureAccess(res.data.featureAccess));
       }
-      const result = await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/websites/${website._id}`, {
+      const result = await axios.put(`${API_URL}/websites/${website._id}`, {
         isPublished: false,
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -156,7 +157,7 @@ const WebsiteSettings = ({ website, onSave }) => {
   const handleRemoveWatermark = async () => {
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/websites/${website._id}/watermark`,
+        `${API_URL}/websites/${website._id}/watermark`,
         { watermark: false },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
@@ -173,7 +174,7 @@ const WebsiteSettings = ({ website, onSave }) => {
   const handleRestoreWatermark = async () => {
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/websites/${website._id}/watermark`,
+        `${API_URL}/websites/${website._id}/watermark`,
         { watermark: true },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
@@ -188,16 +189,16 @@ const WebsiteSettings = ({ website, onSave }) => {
 
   // Handle watermark purchase
   const handlePurchaseWatermark = () => {
-    navigate('/dashboard/plan');
+    navigate('/dashboard/my-plan');
   };
 
   // Add new handler for QR code purchase
   const handlePurchaseQRCode = () => {
-    navigate('/dashboard/plan');
+    navigate('/dashboard/my-plan');
   };
 
   const handlePurchasePublishLimit = () => {
-    navigate('/dashboard/plan');
+    navigate('/dashboard/my-plan');
   };
 
 
@@ -207,7 +208,7 @@ const WebsiteSettings = ({ website, onSave }) => {
     setSavingSeo(true);
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/websites/${website._id}/custom-title`,
+        `${API_URL}/websites/${website._id}/custom-title`,
         { title: 'Website Builder' },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
@@ -226,7 +227,7 @@ const WebsiteSettings = ({ website, onSave }) => {
     setSavingSeo(true);
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/websites/${website._id}/custom-title`,
+        `${API_URL}/websites/${website._id}/custom-title`,
         { title: seoTitle },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
@@ -241,7 +242,7 @@ const WebsiteSettings = ({ website, onSave }) => {
     }
   };
   const handlePurchaseSeoTitle = () => {
-    navigate('/dashboard/plan');
+    navigate('/dashboard/my-plan');
   };
 
   // --- Logo Handlers ---
@@ -250,7 +251,7 @@ const WebsiteSettings = ({ website, onSave }) => {
     setSavingSeo(true);
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/websites/${website._id}/custom-logo`,
+        `${API_URL}/websites/${website._id}/custom-logo`,
         { logoUrl: '' },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
@@ -269,7 +270,7 @@ const WebsiteSettings = ({ website, onSave }) => {
     setSavingSeo(true);
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/websites/${website._id}/custom-logo`,
+        `${API_URL}/websites/${website._id}/custom-logo`,
         { logoUrl: seoLogoUrl },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
@@ -284,7 +285,7 @@ const WebsiteSettings = ({ website, onSave }) => {
     }
   };
   const handlePurchaseSeoLogo = () => {
-    navigate('/dashboard/plan');
+    navigate('/dashboard/my-plan');
   };
 
   // Logo upload handler
@@ -623,7 +624,7 @@ const WebsiteSettings = ({ website, onSave }) => {
         {slugMsg && (
           <div className="mt-2 text-sm text-green-600 animate-fade-in-out">{slugMsg}</div>
         )}
-        <div className="flex items-center gap-2 mt-3 bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
+        {/* <div className="flex items-center gap-2 mt-3 bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800">
           <span>Want to have url such as <b>https://{currentSlug}.com</b> ? then</span>
           <button
             className="px-2 py-1 bg-blue-500 text-white rounded text-xs font-semibold hover:bg-blue-700 transition"
@@ -631,7 +632,7 @@ const WebsiteSettings = ({ website, onSave }) => {
           >
             click here
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Publish/Unpublish Button */}

@@ -2,10 +2,16 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 const ContactUs = () => {
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   const navigate = useNavigate();
   const { user } = useSelector(state => state.auth);
+  
   
   const [formData, setFormData] = useState({
     name: '',
@@ -40,7 +46,8 @@ const ContactUs = () => {
     setError('');
     
     try {
-      const response = await axios.post('http://localhost:5000/api/contact/submit', formData);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const response = await axios.post(`${apiUrl}/contact/submit`, formData);
       
       setIsSubmitting(false);
       setSubmitStatus('success');
