@@ -1,64 +1,85 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Watermark from '../components/Watermark';
 
-// Helper to get the import path for a component
-const getComponentImport = (role, templateType, type) => {
-  // Map type to filename
-  const typeToFile = {
-    hero: 'hero',
-    about: 'about',
-    contact: 'contact',
-    header: 'header',
-    footer: 'footer',
-    achievements:'achievements',
-    certificates:'certificates',
-    education:'education',
-    experience:'experience',
-    projects:'projects',
-    coursesTaught:'coursesTaught',
-    privateClassFees:'privateClassFees',
-    privateClassTimings:'privateClassTimings',
-    proffesionalJourney:'professionalJourney',
-    studentFeedback:'studentFeedback'
-  };
+// Use Vite's glob import to dynamically load all template components
+// This allows Vite to analyze and bundle all components at build time
+const componentModules = import.meta.glob('../templates/**/*.jsx', { eager: false });
+
+// Helper to map type to filename
+const typeToFile = {
+  hero: 'hero',
+  about: 'about',
+  contact: 'contact',
+  header: 'header',
+  footer: 'footer',
+  achievements:'achievements',
+  certificates:'certificates',
+  education:'education',
+  experience:'experience',
+  projects:'projects',
+  coursesTaught:'coursesTaught',
+  privateClassFees:'privateClassFees',
+  privateClassTimings:'privateClassTimings',
+  proffesionalJourney:'professionalJourney',
+  studentFeedback:'studentFeedback'
+};
+
+// Helper to get the component path
+const getComponentPath = (role, templateType, type) => {
   const file = typeToFile[type] || type;
-  // Prefer role-specific, fallback to common_role
+  // Try role-specific first, then common_role
   const rolePath = `../templates/${role}/${templateType}/${file}.jsx`;
   const commonPath = `../templates/common_role/${templateType}/${file}.jsx`;
   return [rolePath, commonPath];
 };
 
 const DynamicComponent = ({ role, templateType, type, content, style }) => {
-  const [rolePath, commonPath] = getComponentImport(role, templateType, type);
-  let Imported = null;
-  try {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    Imported = React.lazy(() => import(/* @vite-ignore */rolePath));
-  } catch {
-    try {
-      Imported = React.lazy(() => import(/* @vite-ignore */commonPath));
-    } catch {
-      Imported = null;
+  const [Component, setComponent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const [rolePath, commonPath] = getComponentPath(role, templateType, type);
+    
+    // Find the module in the glob map
+    const moduleLoader = componentModules[rolePath] || componentModules[commonPath];
+    
+    if (moduleLoader) {
+      moduleLoader()
+        .then((module) => {
+          setComponent(() => module.default);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Failed to load component:', err);
+          setError(err);
+          setLoading(false);
+        });
+    } else {
+      setError(new Error(`Component not found: ${rolePath} or ${commonPath}`));
+      setLoading(false);
     }
+  }, [role, templateType, type]);
+
+  if (loading) {
+    return (
+      <div className="h-36 w-full bg-gray-200 rounded-lg animate-pulse mb-4"></div>
+    );
   }
-  if (!Imported) {
+
+  if (error || !Component) {
     return (
       <div className="rounded-xl border-2 border-dashed border-red-200 bg-red-50 p-6 text-center">
         <div className="text-red-500 text-4xl mb-3">⚠️</div>
         <h3 className="text-red-700 font-medium mb-1">Component Not Found</h3>
         <p className="text-red-600 text-sm">Component for type "{type}" could not be loaded</p>
-        <p className="text-red-500 text-xs mt-1">Check if the component file exists</p>
+        <p className="text-red-500 text-xs mt-1">Role: {role}, Template: {templateType}</p>
       </div>
     );
   }
-  return (
-    <Suspense fallback={
-      <div className="h-36 w-full bg-gray-200 rounded-lg animate-pulse mb-4"></div>
-    }>
-      <Imported content={content} style={style} />
-    </Suspense>
-  );
+
+  return <Component content={content} style={style} />;
 };
 
 
