@@ -2,7 +2,17 @@
   command = "npm run build"
   publish = "dist"
 
+# Redirect all requests to index.html except for files that exist
+# This ensures SPA routing works while allowing assets to be served correctly
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = false
+
+# Ensure proper MIME types for JavaScript modules
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"

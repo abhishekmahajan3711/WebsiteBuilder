@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const ComponentList = ({ components, selectedIdx, onSelect, availableComponents, setComponents }) => {
   // Map for quick lookup
-  const componentMap = Object.fromEntries(components.map((c, i) => [c.type, { ...c, idx: i }]));
+  const componentMap = Object.fromEntries((components || []).map((c, i) => [c.type, { ...c, idx: i }]));
 
   // Drag and drop state
   const [draggedIdx, setDraggedIdx] = React.useState(null);
@@ -61,8 +61,8 @@ const ComponentList = ({ components, selectedIdx, onSelect, availableComponents,
           <span>📋</span>
           Website Components
         </h3>
-        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-          {components.length} active
+          <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+          {(components || []).length} active
         </span>
       </div>
 
@@ -73,7 +73,7 @@ const ComponentList = ({ components, selectedIdx, onSelect, availableComponents,
           Active Components
         </h4>
         
-        {components.length === 0 && (
+  {(components || []).length === 0 && (
           <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
             <div className="text-gray-400 text-4xl mb-2">📝</div>
             <p className="text-gray-500 text-sm">No components selected</p>
@@ -82,7 +82,7 @@ const ComponentList = ({ components, selectedIdx, onSelect, availableComponents,
         )}
 
         <div className="space-y-2">
-          {components.map((comp, idx) => (
+          {(components || []).map((comp, idx) => (
             <div
               key={comp.type}
               className={`group relative transition-all duration-200`}
