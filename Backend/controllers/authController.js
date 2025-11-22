@@ -21,12 +21,12 @@ export const signup = async (req, res) => {
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
     
     // Send welcome email (optional - can be disabled)
-    try {
-      await sendWelcomeEmail(email, name);
-    } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
-      // Don't fail the signup if email fails
-    }
+    // try {
+    //   await sendWelcomeEmail(email, name);
+    // } catch (emailError) {
+    //   console.error('Failed to send welcome email:', emailError);
+    //   // Don't fail the signup if email fails
+    // }
     
     res.status(201).json({ user: { _id: user._id, name, email, phone }, token });
   } catch (err) {
