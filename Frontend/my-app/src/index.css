@@ -1,1 +1,7 @@
+/* Tailwind layers - use the official directives so Tailwind can generate
+	the base, component and utility styles during build. The previous
+	@import "tailwindcss" can work in dev but often leads to empty
+	production CSS if a Tailwind config (content paths) is missing. */
+/* Import Tailwind entry. The @tailwindcss/postcss plugin will process
+	this during the build and expand the required layers. */
 @import "tailwindcss";

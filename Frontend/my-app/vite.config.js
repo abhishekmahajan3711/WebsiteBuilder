@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import tailwindcss from '@tailwindcss/vite'
+// We use PostCSS with the official tailwindcss plugin during build
+// instead of the third-party '@tailwindcss/vite' plugin which may
+// not be compatible with the installed Tailwind version.
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(),tailwindcss(),],
+  plugins: [react()],
   base: "/",
   build: {
     assetsDir: 'assets',
