@@ -84,7 +84,7 @@ const DynamicComponent = ({ role, templateType, type, content, style }) => {
 
 
 
-const LivePreview = ({ components = [], theme, role = 'common_role', templateType = 'basic', watermark, website }) => {
+const LivePreview = ({ components, theme, role = 'common_role', templateType = 'basic', watermark, website }) => {
   // Set document title and favicon manually
   useEffect(() => {
     if (website?.seo?.title) {
@@ -107,7 +107,7 @@ const LivePreview = ({ components = [], theme, role = 'common_role', templateTyp
   return (
     <div className="space-y-6 min-h-screen relative">
       {/* Components */}
-  {(components || []).length === 0 ? (
+  {components.length === 0 ? (
         <div className="text-center py-16">
           <div className="text-gray-300 text-6xl mb-4">👁️</div>
           <h3 className="text-gray-500 font-medium mb-2">No Components to Preview</h3>
@@ -115,7 +115,7 @@ const LivePreview = ({ components = [], theme, role = 'common_role', templateTyp
         </div>
       ) : (
         <div className="space-y-0">
-          {(components || []).map((comp, idx) => (
+          {components.map((comp, idx) => (
             <div key={idx} className="relative group">
               {/* Component Content */}
               <div className="relative">
@@ -123,12 +123,8 @@ const LivePreview = ({ components = [], theme, role = 'common_role', templateTyp
                   role={role}
                   templateType={templateType}
                   type={comp.type}
-                  // If content/style are null or empty objects, pass undefined so
-                  // the loaded component's default props (sample content/style)
-                  // will be used in preview. This prevents template components
-                  // from trying to map over undefined fields.
-                  content={comp.content && Object.keys(comp.content).length > 0 ? comp.content : undefined}
-                  style={comp.style && Object.keys(comp.style).length > 0 ? comp.style : undefined}
+                  content={comp.content}
+                  style={comp.style}
                 />
               </div>
             </div>
